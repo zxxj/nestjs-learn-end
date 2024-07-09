@@ -1,0 +1,84 @@
+nestjs学习
+
+# 一.docker
+
+1. 安装docker
+
+   ```js
+   // 1.去docker官网下载安装包,并解决报错问题
+   
+   // 2.安装成功之后终端输入以下两个命令来检查docker是否安装成功
+   docker --version // 检查是否正确输出版本号?
+   docker-compose --version // 检查是否正确输出版本号?
+   ```
+
+2. docker创建mysql数据库
+
+   ```js
+   // 1.首先去dockerhub搜索mysql,在介绍中可以看到如下的一句命令
+   $ docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+   
+   // 2.然后将这段命粘贴到终端,将密码修改一下,然后回车并执行
+   注意: 如果本地不存在mysql,那么执行这段命令时,docker首先会去下载mysql
+   docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:tag
+   
+   // 3.执行成功后,会得到如下的一串随机hash值,这串hash值代表着容器的名字
+   4706d11fe4344a7ffa8b94bedf8819a0f278db9e0a64903326f9c37dfa923da1
+   
+   // 4.可以通过docker ps来查看你所启动的所有docker容器,例如我想看刚刚启动的mysql服务
+   输入docker ps后, 就会列出如下信息:
+   
+   容器ID          镜像                                   运行时间                                  端口
+   4706d11fe434   mysql:8.4.1   "docker-entrypoint.s…"   About a minute ago   Up About a minute   3306/tcp, 
+   
+               名字    
+   33060/tcp   some-mysql
+   ```
+
+3. docker常用命令
+
+   ```js
+   docker run // 
+   docker ps // 查看所有正在运行的容器
+   docker stop 名称 // 关闭某个容器, 例如需要将some-mysql这个数据库关掉可以执行,docker stop some-mysql
+   docker rm 名称 // 删除某个容器, 例如想删除掉some-mysql这个容器可以执行,docker rm some-mysql
+   ```
+
+4. docker-compose
+
+   docker-compose是一款旨在帮助定义和共享多容器应用程序的工具,使用docker-compose可以通过创建一个yml文件来定义容器服务,并且可以使用类似于docker的命令将所有内容进行管理,比如启动,停止,重新部署等
+
+   ```yml
+   # 例如想要通过docker-compose创建mysql服务,首先需要写入如下配置,然后运行docker-compose up -d 来启动
+   
+   # Use root/example as user/password credentials
+   version: '3.1'
+   
+   services:
+     db:
+       # 镜像
+       image: mysql
+       # 是否重启
+       restart: always
+       # 环境
+       environment:
+         # 密码
+         MYSQL_ROOT_PASSWORD: 123456
+   
+       # 端口
+       ports:
+         - 3390:3306
+       # (this is just an example, not intended to be a production configuration)
+   
+       # adminer服务: 就是可视化界面的插件
+     adminer:
+       # 镜像
+       image: adminer
+       # 是否重启
+       restart: always
+       # 端口
+       ports:
+         - 8080:8080
+   ```
+
+   
