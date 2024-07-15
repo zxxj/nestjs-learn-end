@@ -81,4 +81,58 @@ nestjs学习
          - 8080:8080
    ```
 
+
+# 二.nest
+
+1. 使用命令创建模块
+
+   ```js
+   // 例如创建user模块
+   nest g module user
+   ```
+
+2. 使用命令创建controller文件
+
+   ```js
+   // 例如创建user.controller.ts
+   nest g controller user
+   
+   // 例如创建user.service.ts
+   nest g service user
+   ```
+
+3. 使用命令创建文件时,指定不需要创建测试文件
+
+   ```js
+   // 例如创建user.controller.ts
+   nest g controller user --no-spec // --no-spec表示不需要创建测试文件
+   ```
+
+4. 使用命令创建某个文件时,可以查看它要做什么
+
+   ```js
+   // 例如创建user.controller.ts
+   nest g controoler user --no-spec -d // -d表示查看你要做什么
+   
+   // 回车后,会打印出如下:
+   CREATE src/user/user.controller.ts (101 bytes) // 表示你将要在src/user目录下创建user.controller.ts,文件大小为101byte
+   UPDATE src/user/user.module.ts (222 bytes) // 这段命令表示的是user.module.ts文件会被更新(导入并挂载刚才创建的user.controller.ts)
+   ```
+
+5. 设置请求前缀
+
+   ```js
+   // main.ts
+   import { NestFactory } from '@nestjs/core';
+   import { AppModule } from './app.module';
+   
+   async function bootstrap() {
+     const app = await NestFactory.create(AppModule);
+     // 设置路由前缀, 例如设置了/api/v1后,访问某一个接口时路径必须为 /api/v1/user 才可以
+     app.setGlobalPrefix('/api/v1');
+     await app.listen(3000);
+   }
+   bootstrap();
+   ```
+
    
