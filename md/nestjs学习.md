@@ -137,7 +137,7 @@ nestjs学习
 
    ## 项目环境配置
    
-   1. 安装@nestjs/config模块
+   1. ### 安装@nestjs/config模块
    
       ```js
       // 1.安装@nestjs/config依赖:
@@ -201,4 +201,64 @@ nestjs学习
         })
       ```
    
-      
+      2. ### 配置与访问环境变量
+   
+         ```js
+         // 1.首先创建三个环境文件
+         .env: 默认环境文件
+         .env.development: 开发环境文件
+         .env.production: 生产环境文件
+         ```
+   
+         ```js
+         // 2.如何实现自动识别并读取对应的环境文件?
+         
+         // 2.1 首先需要通过一个依赖实现, cross-env
+         pnpm i cross-env
+         
+         // 2.2 配置package.json中的两个项目启动命令,都需要加上cross-env NODE_ENV=对应的环境文件名
+             "start:dev": "cross-env NODE_ENV=development nest start --watch",
+             "start:prod": "cross-env NODE_ENV=production node dist/main",
+         
+         // 2.3 在app.module.ts根模块中根据package.json中配置的 cross-env NODE_ENV 来自动拼接环境文件的路径
+         
+         const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
+         console.log(envFilePath); // 例如执行了开发环境命令,则输出 .env.develpoment
+         
+         // 2.4 配置imports
+         @Module({
+           imports: [
+             ConfigModule.forRoot({
+               isGlobal: true,
+               envFilePath, // 想要访问环境文件的路径
+             }),
+             UserModule,
+           ],
+           controllers: [AppController],
+           providers: [AppService],
+         })
+         
+         // tip: 以上操作过后,就能根据当前所处的环境中,正常的访问对应的环境文件中的环境变量了
+         ```
+   
+         ```js
+         // 3.如何将开发环境与生产环境中的通用环境变量进行抽离?
+         
+         // 3.1 第一步,将通用的环境变量全部写到.env这个默认环境文件中
+         
+         // 3.2 第二步,安装dotenv,首先要知道可以使用dotenv.config({ path: '.env' })方法来加载.env中的所有环境变量
+         
+         // 3.3 第三步,将dotenv加载到的环境变量放入@nestjs/config模块中forRoot方法里面的load,写法如下
+             ConfigModule.forRoot({
+               isGlobal: true,
+               envFilePath, // 想要访问环境文件的路径
+               load: [() => dotenv.config({ path: '.env' })], // 加载.env环境文件,目的是为了将开发与生产环境下共用的配置全写在.env环境文件中,不必写在各自的文件中
+             }),
+                 
+         // tip: 经过以上操作过后,就可以正常的访问到.env默认环境文件下的所有环境变量了
+         // 警告: 如果你在当前环境下的环境文件中定义了与.env默认环境文件中相同的环境变量,那么会覆盖掉.env文件中的环境变量!!
+         ```
+   
+         
+   
+         
