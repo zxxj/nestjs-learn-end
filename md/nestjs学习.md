@@ -259,6 +259,86 @@ nestjs学习
          // 警告: 如果你在当前环境下的环境文件中定义了与.env默认环境文件中相同的环境变量,那么会覆盖掉.env文件中的环境变量!!
          ```
    
-         
+         ## 三.数据库
    
+         1. nestjs如何连接数据库?
+         
+            ```js
+            // 1.1 通过typeorm连接mysql数据库,首先需要安装以下的依赖
+            pnpm i @nestjs/typeorm typeorm mysql2
+            
+            // 1.2 app.module.ts根模块中引入TypeOrmModule
+            import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+            
+            // 1.3 在app.module.ts根模块imports中通过typeorm连接数据库
+                 TypeOrmModule.forRoot({ // 数据库配置
+                   // 使用什么数据库?
+                   type: 'mysql',
+                   // 连接地址
+                   host: '127.0.0.1',
+                   // 数据库端口号
+                   port: 3390,
+                   // 用户名
+                   username: 'root',
+                   // 密码
+                   password: '123456',
+                   // 需要连接到的数据库名称
+                   database: 'testdb',
+                   entities: [],
+                   // 数据库初始化时,将本地的schema同步到数据库中
+                   synchronize: true,
+                   logging: ['error'],
+                 }),
+            ```
+         
+            ```js
+            // 第二种数据库配置方式, 使用dotenv读取环境变量,并使用枚举抽离
+            
+            // .env.development
+            DB_TYPE=mysql
+            DB_HOST=127.0.0.1
+            DB_PORT=3390
+            DB_USERNAME=root
+            DB_PASSWORD=123456
+            DB_DATABASE=test_typeorm
+            DB_SYNC=true
+            DB_LOGGING=error
+            
+            // enum.config.ts
+            enum ConfigEnum {
+              DB_TYPE = 'DB_TYPE',
+              DB_HOST = 'DB_HOST',
+              DB_USERNAME = 'DB_USERNAME',
+              DB_PORT = 'DB_PORT',
+              DB_PASSWORD = 'DB_PASSWORD',
+              DB_DATABASE = 'DB_DATABASE',
+              DB_SYNC = 'DB_SYNC',
+              DB_LOGGING = 'DB_LOGGING',
+            }
+            
+            export { ConfigEnum };
+            
+            // app.module.ts
+                // 数据库配置第二种方式
+                TypeOrmModule.forRootAsync({
+                  imports: [ConfigModule],
+                  inject: [ConfigService],
+                  useFactory: (configService: ConfigService) =>
+                    ({
+                      type: configService.get(ConfigEnum.DB_TYPE),
+                      host: configService.get(ConfigEnum.DB_HOST),
+                      port: configService.get(ConfigEnum.DB_PORT),
+                      username: configService.get(ConfigEnum.DB_USERNAME),
+                      password: configService.get(ConfigEnum.DB_PASSWORD),
+                      database: configService.get(ConfigEnum.DB_DATABASE),
+                      synchronize: configService.get(ConfigEnum.DB_SYNC),
+                      logging: [ConfigEnum.DB_LOGGING],
+                    }) as TypeOrmModuleAsyncOptions,
+                }),
+            ```
+         
+            
+         
+         
+         
          
