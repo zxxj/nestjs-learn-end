@@ -135,4 +135,70 @@ nestjs学习
    bootstrap();
    ```
 
+   ## 项目环境配置
    
+   1. 安装@nestjs/config模块
+   
+      ```js
+      // 1.安装@nestjs/config依赖:
+      pnpm i @nestjs/config
+      ```
+   
+      ```js
+      // 2.app.module.ts根模块中引入并使用, 
+      import { ConfigModule} from "@nestjs/config"
+      ```
+   
+      ```js
+      // 3.imports:[ConfigModule]: 使用ConfigModule全局配置模块
+      @Module({
+        imports: [ConfigModule, UserModule],
+        controllers: [AppController],
+        providers: [AppService],
+      })
+      ```
+   
+      ```js
+      // 4.使用ConfigModule.forRoot()方法的目的是读取本地的.env环境文件
+      @Module({
+        imports: [ConfigModule.forRoot(), UserModule],
+        controllers: [AppController],
+        providers: [AppService],
+      })
+      ```
+   
+      ```js
+      // 5.如果想在其他的模块中通过@nestjs/config访问环境变量时,需要将isGlobal设置为true
+      ConfigModule.forRoot({ isGlobal: true })
+      
+      // demo:
+      import { Controller, Get } from '@nestjs/common';
+      import { UserService } from './user.service';
+      import { ConfigService } from '@nestjs/config';
+      
+      @Controller('user')
+      export class UserController {
+        constructor(
+          private userService: UserService,
+          private configService: ConfigService,
+        ) {}
+      
+        @Get()
+        getUser(): any {
+          const db = this.configService.get('DB');
+          console.log(db);
+          return this.userService.getUser();
+        }
+      }
+      
+      // 不设置时访问环境变量时会报如下错误:
+      Potential solutions:
+      - Is UserModule a valid NestJS module?
+      - If ConfigService is a provider, is it part of the current UserModule?
+      - If ConfigService is exported from a separate @Module, is that module imported within UserModule?
+        @Module({
+          imports: [ /* the Module containing ConfigService */ ]
+        })
+      ```
+   
+      
