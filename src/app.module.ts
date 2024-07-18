@@ -6,6 +6,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { ConfigEnum } from './enum/enum.config';
+import { User } from './user/user.entity';
+import { Profile } from './user/profile.entity';
+import { Roles } from './roles/roles.entity';
+import { Logs } from './logs/logs.entity';
 
 // 根据package.json中配置的 cross-env NODE_ENV 来自动拼接环境文件的路径
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`;
@@ -52,8 +56,9 @@ console.log(envFilePath);
           username: configService.get(ConfigEnum.DB_USERNAME),
           password: configService.get(ConfigEnum.DB_PASSWORD),
           database: configService.get(ConfigEnum.DB_DATABASE),
+          entities: [User, Profile, Roles, Logs],
           synchronize: configService.get(ConfigEnum.DB_SYNC),
-          logging: [ConfigEnum.DB_LOGGING],
+          logging: [configService.get(ConfigEnum.DB_LOGGING)],
         }) as TypeOrmModuleAsyncOptions,
     }),
   ],
