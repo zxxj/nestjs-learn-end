@@ -11,7 +11,7 @@ import {
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Column()
   username: string;
@@ -20,8 +20,8 @@ export class User {
   password: string;
 
   @OneToMany(() => Logs, (logs) => logs.user)
-  logs: Logs[];
+  logs?: Logs[];
 
   @ManyToMany(() => Roles, (roles) => roles.user)
-  roles: Roles[];
+  roles?: Roles[];
 }

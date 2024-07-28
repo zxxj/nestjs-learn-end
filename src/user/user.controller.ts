@@ -1,4 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -10,11 +18,31 @@ export class UserController {
   ) {}
 
   @Get()
-  getUser(): any {
-    // const db = this.configService.get(ConfigEnum.DB);
-    const url = this.configService.get('DB_URL');
-    // console.log(db);
-    console.log('url', url);
-    return this.userService.getUser();
+  getUser() {
+    return this.userService.findAll();
+  }
+
+  @Get(':id')
+  getUserById(@Param() id) {
+    return this.userService.find(id);
+  }
+
+  @Post()
+  addUser() {
+    const obj = {
+      username: 'test',
+      password: '123456',
+    };
+    return this.userService.create(obj);
+  }
+
+  @Put(':id')
+  updateUser(@Param() id, @Body() user) {
+    return this.userService.update(id, user);
+  }
+
+  @Delete(':id')
+  removeUser(@Param() id) {
+    return this.userService.delete(id);
   }
 }

@@ -1,17 +1,32 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  getUser(): any {
-    return {
-      code: 200,
-      data: [
-        {
-          username: 'xin',
-          age: 18,
-        },
-      ],
-      message: '请求用户信息成功!',
-    };
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {}
+
+  findAll() {
+    return this.userRepository.find();
+  }
+
+  find(id: number) {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async create(user: User) {
+    const userObj = await this.userRepository.create(user);
+    return this.userRepository.save(userObj);
+  }
+
+  update(id: number, user: Partial<User>) {
+    return this.userRepository.update(id, user);
+  }
+
+  delete(id: number) {
+    return this.userRepository.delete(id);
   }
 }
