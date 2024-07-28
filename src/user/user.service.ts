@@ -17,7 +17,7 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async create(user: User) {
+  async create(user: Partial<User>) {
     const userObj = await this.userRepository.create(user);
     return this.userRepository.save(userObj);
   }
@@ -28,5 +28,27 @@ export class UserService {
 
   delete(id: number) {
     return this.userRepository.delete(id);
+  }
+
+  findProfile(id: number) {
+    return this.userRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        profile: true,
+      },
+    });
+  }
+
+  findLogs(id: number) {
+    return this.userRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        logs: true,
+      },
+    });
   }
 }

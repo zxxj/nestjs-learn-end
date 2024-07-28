@@ -23,7 +23,7 @@ export class UserController {
   }
 
   @Get(':id')
-  getUserById(@Param() id) {
+  getUserById(@Param('id') id: number) {
     return this.userService.find(id);
   }
 
@@ -44,5 +44,15 @@ export class UserController {
   @Delete(':id')
   removeUser(@Param() id) {
     return this.userService.delete(id);
+  }
+
+  @Get('/profile/:id')
+  getUserProfile(@Param('id') id: number) {
+    return this.userService.findProfile(id);
+  }
+
+  @Get('/logs/:id')
+  getUserLogs(@Param('id') id: number) {
+    return this.userService.findLogs(id);
   }
 }
