@@ -339,6 +339,16 @@ nestjs学习
          
             
          
+         ## 四.nest请求
+         
+         ```js
+         1. @param('/:id'): get参数
+         2. @Query('/:id'): 查询参数
+         3. @Headers(): 获取请求头信息
+         4. @Body(): body参数
+         5. @Req(): 获取完整的请求信息
+         ```
+         
          
          
          

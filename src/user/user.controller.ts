@@ -3,12 +3,15 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
+import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
@@ -18,31 +21,29 @@ export class UserController {
   ) {}
 
   @Get()
-  getUser() {
+  getUser(@Req() req, @Headers() headers) {
+    // console.log(req);
+    console.log(headers);
     return this.userService.findAll();
   }
 
-  @Get(':id')
+  @Get('/:id')
   getUserById(@Param('id') id: number) {
     return this.userService.find(id);
   }
 
   @Post()
-  addUser() {
-    const obj = {
-      username: 'test',
-      password: '123456',
-    };
-    return this.userService.create(obj);
+  addUser(@Body() dto: any): any {
+    return this.userService.create(dto as User);
   }
 
-  @Put(':id')
-  updateUser(@Param() id, @Body() user) {
-    return this.userService.update(id, user);
+  @Put('/:id')
+  updateUser(@Param('id') id: number, @Body() dto: any) {
+    return this.userService.update(id, dto as User);
   }
 
-  @Delete(':id')
-  removeUser(@Param() id) {
+  @Delete('/:id')
+  removeUser(@Param('id') id) {
     return this.userService.delete(id);
   }
 
