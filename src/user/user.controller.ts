@@ -7,11 +7,13 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ConfigService } from '@nestjs/config';
 import { User } from './user.entity';
+import { getUserDto } from './dto';
 
 @Controller('user')
 export class UserController {
@@ -21,10 +23,11 @@ export class UserController {
   ) {}
 
   @Get()
-  getUser(@Req() req, @Headers() headers) {
+  getUser(@Query() query: getUserDto, @Req() req, @Headers() headers) {
     // console.log(req);
-    console.log(headers);
-    return this.userService.findAll();
+    // console.log(headers);
+    console.log(query);
+    return this.userService.findAll(query);
   }
 
   @Get('/:id')
@@ -34,6 +37,7 @@ export class UserController {
 
   @Post()
   addUser(@Body() dto: any): any {
+    console.log(dto);
     return this.userService.create(dto as User);
   }
 
