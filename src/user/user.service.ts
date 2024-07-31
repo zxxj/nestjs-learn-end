@@ -3,11 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { getUserDto } from './dto';
+import { Logs } from 'src/logs/logs.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Logs) private readonly logsRepository: Repository<Logs>,
   ) {}
 
   findAll(query: getUserDto) {
@@ -56,7 +58,7 @@ export class UserService {
     });
   }
 
-  find(id: number) {
+  findOne(id: number) {
     return this.userRepository.findOne({ where: { id } });
   }
 
@@ -77,18 +79,21 @@ export class UserService {
     return this.userRepository.update(id, user);
   }
 
-  delete(id: number) {
-    return this.userRepository.delete(id);
+  async remove(id: number) {
+    const user = await this.findOne(id);
+    return this.userRepository.remove(user);
   }
 
-  findProfile(id: number) {
-    return this.userRepository.findOne({
+  async findProfile(id: number) {
+    const user = await this.findOne(id);
+
+    return this.logsRepository.find({
       where: {
-        id,
+        user: user.logs,
       },
-      relations: {
-        profile: true,
-      },
+      // relations: {
+      //   profile: true,
+      // },
     });
   }
 

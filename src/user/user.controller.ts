@@ -32,7 +32,7 @@ export class UserController {
 
   @Get('/:id')
   getUserById(@Param('id') id: number) {
-    return this.userService.find(id);
+    return this.userService.findOne(id);
   }
 
   @Post()
@@ -48,7 +48,7 @@ export class UserController {
 
   @Delete('/:id')
   removeUser(@Param('id') id) {
-    return this.userService.delete(id);
+    return this.userService.remove(id);
   }
 
   @Get('/profile/:id')
