@@ -5,8 +5,8 @@ import {
   Get,
   Headers,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
   Req,
 } from '@nestjs/common';
@@ -32,7 +32,7 @@ export class UserController {
 
   @Get('/:id')
   getUserById(@Param('id') id: number) {
-    return this.userService.findOne(id);
+    return this.userService.find(id);
   }
 
   @Post()
@@ -41,7 +41,7 @@ export class UserController {
     return this.userService.create(dto as User);
   }
 
-  @Put('/:id')
+  @Patch('/:id')
   updateUser(@Param('id') id: number, @Body() dto: any) {
     return this.userService.update(id, dto as User);
   }
